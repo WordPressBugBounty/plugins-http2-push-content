@@ -5,8 +5,8 @@ Tags: HTTP2, Async CSS, Defer CSS, Defer JS, Async JS, pagespeed, Optimize
 Requires at least: 4.0
 Tested up to: 6.6.1
 License: GPLv2 or later
-Stable tag: 1.10.14
-Requires PHP: 5.4
+Stable tag: 1.10.16
+Requires PHP: 7.4
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Push pre-load any resource, Async JavaScript, Defer Render Blocking CSS, with fine rule set to control js and css on different page types, HTTP2 Server push
