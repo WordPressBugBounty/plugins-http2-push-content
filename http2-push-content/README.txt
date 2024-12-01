@@ -3,9 +3,9 @@ Contributors: rajeshsingh520
 Donate link: piwebsolution.com
 Tags: HTTP2, Async CSS, Defer CSS, Defer JS, Async JS, pagespeed, Optimize
 Requires at least: 4.0
-Tested up to: 6.6.1
+Tested up to: 6.7.0
 License: GPLv2 or later
-Stable tag: 1.10.16
+Stable tag: 1.10.17
 Requires PHP: 7.4
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
