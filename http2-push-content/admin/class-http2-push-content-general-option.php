@@ -16,7 +16,11 @@ class Http2_Push_Content_General_Option{
 
     public $as = array('script', 'style', "embed", "fetch", "font", "image", "object", "video");
 
-    public $to = array("push-preload", "push", "preload");
+    public $to = array("push-preload", "push", "preload", "push-preload-exclude", "push-exclude", "preload-exclude",);
+
+    public $settings = array();
+
+    public $tab;
 
     function __construct($plugin_name){
         $this->plugin_name = $plugin_name;
@@ -96,6 +100,9 @@ class Http2_Push_Content_General_Option{
                         <option value="push-preload" {{if value.to == 'push-preload'}}selected="selected"{{/if}}>Push and Preload</option>
                         <option value="push" {{if value.to == 'push'}}selected="selected"{{/if}}>Push</option>
                         <option value="preload" {{if value.to == 'preload'}}selected="selected"{{/if}}>Preload</option>
+                        <option value="push-preload-exclude" {{if value.to == 'push-preload-exclude'}}selected="selected"{{/if}}>Push and Preload on all excluding</option>
+                        <option value="push-exclude" {{if value.to == 'push-exclude'}}selected="selected"{{/if}}>Push on all excluding</option>
+                        <option value="preload-exclude" {{if value.to == 'preload-exclude'}}selected="selected"{{/if}}>Preload on all excluding</option>
         </select>
         <select required class="general_push_list_rule form-control w-25"  name="http2_push_general_list[{{: count}}][apply_to]" data-count="{{: count}}" data-name="http2_push_general_list">
             <?php 

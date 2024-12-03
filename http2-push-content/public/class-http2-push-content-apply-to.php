@@ -85,6 +85,11 @@ class Http2_Push_Content_Apply_To {
 	function check($apply_to, $rule = ""){
 		if(isset($apply_to)){
 			if(method_exists($this, 'is_'.$apply_to)){
+
+				if(is_array($rule) && isset($rule['to']) && in_array($rule['to'],['remove-exclude', 'async-exclude', 'defer-exclude','push-preload-exclude', 'push-exclude', 'preload-exclude'])){
+					return !$this->{'is_'.$apply_to}($rule);
+				}
+
 				return $this->{'is_'.$apply_to}($rule);
 			}else{
 				return true;

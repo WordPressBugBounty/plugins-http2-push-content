@@ -14,6 +14,10 @@ class pisol_http2_other_plugins{
 
     private $setting_key = 'pisol_corw_other_plugins';
 
+    public $settings = array();
+
+    public $tab;
+
 
     function __construct($plugin_name){
         $this->plugin_name = $plugin_name;

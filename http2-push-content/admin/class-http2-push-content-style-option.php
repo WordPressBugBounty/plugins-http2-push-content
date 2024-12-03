@@ -14,6 +14,10 @@ class Http2_Push_Content_Style_Option{
 
     private $setting_key = 'http2_async_css_style';
 
+    public $settings = array();
+
+    public $tab;
+
    
     function __construct($plugin_name){
         $this->plugin_name = $plugin_name;
@@ -94,6 +98,8 @@ class Http2_Push_Content_Style_Option{
                         <option disabled><?php _e('Select', 'http2-push-content'); ?></option>
                         <option value="async" {{if value.to == 'async'}}selected="selected"{{/if}}>Asynchronous</option>
                         <option value="remove" {{if value.to == 'remove'}}selected="selected"{{/if}}>Remove</option>
+                        <option value="async-exclude" {{if value.to == 'async-exclude'}}selected="selected"{{/if}}>Asynchronous on all excluding</option>
+                        <option value="remove-exclude" {{if value.to == 'remove-exclude'}}selected="selected"{{/if}}>Remove on all excluding</option>
         </select>
         <select required class="general_async_css_list_rule form-control w-25"  name="http2_async_css_list[{{: count}}][apply_to]"  data-count="{{: count}}"  data-name="http2_async_css_list">
             <?php 
@@ -101,10 +107,10 @@ class Http2_Push_Content_Style_Option{
                 $obj->apply_to_options();
             ?>
         </select>
-        <input type='text' class="form-control w-25 css_identifier" name="http2_async_css_list[{{: count}}][group]" value="{{: value.group}}" placeholder="Group name" title="this helps you to group similar rule to gather so you can manage them properly, So if you are removing some content from home page you can name this as group Home, if you are removing some thing from all the pages then you can name it as All">
         {{if value.id != undefined && (value.apply_to == 'specific_pages' || value.apply_to == 'not_specific_pages' || value.apply_to == 'specific_posts' || value.apply_to == 'not_specific_posts') }}
         <input class="pisol-ids form-control" type="text" name="http2_async_css_list[{{: count}}][id]" value="{{: value.id}}" id="http2_async_css_list_{{: count}}_id"  placeholder="e.g: 12, 22, 33">
         {{/if}}
+        <input type='text' class="form-control w-25 css_identifier" name="http2_async_css_list[{{: count}}][group]" value="{{: value.group}}" placeholder="Group name" title="this helps you to group similar rule to gather so you can manage them properly, So if you are removing some content from home page you can name this as group Home, if you are removing some thing from all the pages then you can name it as All">
         <a class="remove_css_resource" href="javascript:void(0);"><span class="dashicons dashicons-trash pi-icon"></span></a>
         </div>
         </script>

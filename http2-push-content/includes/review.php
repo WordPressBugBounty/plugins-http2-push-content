@@ -1,17 +1,105 @@
 <?php
 /*
-v1.0.0
+v1.0.1
 */
 if(!class_exists('pisol_http2_push_content_review')){
+
 class pisol_http2_push_content_review{
-    function __construct($title, $slug ){
+
+    public $title;
+    public $slug;
+    public $activation_date;
+    public $saved_value;
+    public $review_url;
+    public $review_after;
+    public $buy_url;
+    public $price;
+    public $allowed_tags = array();
+        
+    function __construct($title, $slug, $buy_url = '', $price = '' ){
         if(function_exists('is_admin') && is_admin()){
         $this->title = $title;
         $this->slug = $slug;
         $this->activation_date = "pi_review_activation_date_{$this->slug}";
         $this->saved_value = "pi_review_saved_value_{$this->slug}";
         $this->review_url = "https://wordpress.org/support/plugin/{$this->slug}/reviews/?rate=5#new-post";
-        $this->review_after = 10;
+        $this->review_after = 6;
+        $this->buy_url = $buy_url;
+        $this->price = $price;
+
+        $allowed_atts = array(
+            'align'      => array(),
+            'class'      => array(),
+            'selected'   => array(),
+            'multiple'   => array(),
+            'checked'    => array(),
+            'type'       => array(),
+            'id'         => array(),
+            'dir'        => array(),
+            'lang'       => array(),
+            'style'      => array(),
+            'xml:lang'   => array(),
+            'src'        => array(),
+            'alt'        => array(),
+            'href'       => array(),
+            'rel'        => array(),
+            'rev'        => array(),
+            'target'     => array(),
+            'novalidate' => array(),
+            'type'       => array(),
+            'value'      => array(),
+            'name'       => array(),
+            'tabindex'   => array(),
+            'action'     => array(),
+            'method'     => array(),
+            'for'        => array(),
+            'width'      => array(),
+            'height'     => array(),
+            'data'       => array(),
+            'title'      => array(),
+            'min'        => array(),
+            'max'        => array(),
+            'step'        => array(),
+            'required'   => array(),
+            'readonly'   => array(),
+        );
+        $this->allowed_tags['form']     = $allowed_atts;
+        $this->allowed_tags['br']     = $allowed_atts;
+        $this->allowed_tags['label']    = $allowed_atts;
+        $this->allowed_tags['input']    = $allowed_atts;
+        $this->allowed_tags['select']    = $allowed_atts;
+        $this->allowed_tags['option']    = $allowed_atts;
+        $this->allowed_tags['textarea'] = $allowed_atts;
+        $this->allowed_tags['iframe']   = $allowed_atts;
+        $this->allowed_tags['script']   = $allowed_atts;
+        $this->allowed_tags['style']    = $allowed_atts;
+        $this->allowed_tags['strong']   = $allowed_atts;
+        $this->allowed_tags['small']    = $allowed_atts;
+        $this->allowed_tags['table']    = $allowed_atts;
+        $this->allowed_tags['span']     = $allowed_atts;
+        $this->allowed_tags['abbr']     = $allowed_atts;
+        $this->allowed_tags['code']     = $allowed_atts;
+        $this->allowed_tags['pre']      = $allowed_atts;
+        $this->allowed_tags['div']      = $allowed_atts;
+        $this->allowed_tags['img']      = $allowed_atts;
+        $this->allowed_tags['h1']       = $allowed_atts;
+        $this->allowed_tags['h2']       = $allowed_atts;
+        $this->allowed_tags['h3']       = $allowed_atts;
+        $this->allowed_tags['h4']       = $allowed_atts;
+        $this->allowed_tags['h5']       = $allowed_atts;
+        $this->allowed_tags['h6']       = $allowed_atts;
+        $this->allowed_tags['ol']       = $allowed_atts;
+        $this->allowed_tags['ul']       = $allowed_atts;
+        $this->allowed_tags['li']       = $allowed_atts;
+        $this->allowed_tags['em']       = $allowed_atts;
+        $this->allowed_tags['hr']       = $allowed_atts;
+        $this->allowed_tags['br']       = $allowed_atts;
+        $this->allowed_tags['tr']       = $allowed_atts;
+        $this->allowed_tags['td']       = $allowed_atts;
+        $this->allowed_tags['p']        = $allowed_atts;
+        $this->allowed_tags['a']        = $allowed_atts;
+        $this->allowed_tags['b']        = $allowed_atts;
+        $this->allowed_tags['i']        = $allowed_atts;
 
         //update_option($this->saved_value, array('preference'=> 'later', 'update_at'=>'2021/06/10'));
         //delete_option($this->saved_value);
@@ -22,37 +110,67 @@ class pisol_http2_push_content_review{
     }
 
     function display_admin_notice() {
- 
+    
         $options = get_option($this->saved_value);
 
-	    $activation_time = $this->getInstallationDate();
+        $activation_time = $this->getInstallationDate();
 
-	    $notice = '<div class="notice notice-success is-dismissible">';
-        $notice .= '<div style="display:flex;">';
+        $notice = '<div class="notice notice-error is-dismissible">';
+        $notice .= '<style>.pisol-review-btn {
+            display: block;
+            padding: 10px 15px;
+            color: #FFF;
+            text-decoration: none;
+            border-radius: 2px;
+        }
+        
+        .pi-active-btn {
+            background-color: #00adb5;
+        }
+        
+        .pi-passive-btn {
+            background-color: #ccc;
+        }
+
+        .pi-buy-now-btn {
+            background-color: #ee6443;
+        }
+
+        .pi-flex{
+            display:flex;
+            align-items:center;
+        }
+        </style>';
+        $notice .= '<div class="pi-flex">';
         $notice .= '<img style="max-width:90px; height:auto;" src="'.plugin_dir_url( __FILE__ ).'review-icon.svg" alt="pi web solution">';
         $notice .= '<div style="margin-left:20px;">';
-        $notice .= '<p><b>'.__("We have worked hard to develop the plugin and it would really appreciate us if you dropped a short review about the plugin. Your review means a lot to us and we are working to make the plugin more awesome. Thanks for using {$this->title}").'</b></p>';
-        $notice .= '<ul style="display: inline-grid;
+        /* translators: Plugin title */
+        $notice .= '<p>'.sprintf(__("Hi there, You've been using <strong>%s</strong> on your site for a few days <br>- I hope it's been helpful. If you're enjoying my plugin, would you mind rating it 5-stars to help spread the word?"), $this->title).'</p>';
+        $notice .= '<ul class="pi-flex" style="margin-top:15px;
         grid-template-columns: 1fr 1fr 1fr;
         grid-column-gap: 20px;
         text-align: center;">';
-        $notice .= '<li><a val="later" href="'.add_query_arg(array('action' => "pi_save_review_preference_{$this->slug}", 'preference'=>'later',  '_wpnonce'=>wp_create_nonce( "pi_save_review_preference_{$this->slug}" )), admin_url('admin-post.php')).'">'.__("Remind me later").'</a></li>';
-        $notice .= '<li><a style="font-weight:bold;" val="given" href="'.add_query_arg(array('action' => "pi_save_review_preference_{$this->slug}", 'preference'=>'now','_wpnonce'=>wp_create_nonce( "pi_save_review_preference_{$this->slug}" )), admin_url('admin-post.php')).'" target="_blank">'.__("Review Here").'</a></li>';
-		$notice .= '<li><a val="never" href="'.add_query_arg(array('action' => "pi_save_review_preference_{$this->slug}", 'preference'=>'never', '_wpnonce'=>wp_create_nonce( "pi_save_review_preference_{$this->slug}" )), admin_url('admin-post.php')).'">'.__("I would not").'</a></li>';	        
+        $notice .= '<li><a val="later" class="pi-active-btn pisol-review-btn" href="'.add_query_arg(array('action' => "pi_save_review_preference_{$this->slug}", 'preference'=>'later',  '_wpnonce'=>wp_create_nonce( "pi_save_review_preference_{$this->slug}" )), admin_url('admin-post.php')).'">'.__("Remind me later").'</a></li>';
+        $notice .= '<li><a  class="pi-active-btn pisol-review-btn" style="font-weight:bold;" val="given" href="'.add_query_arg(array('action' => "pi_save_review_preference_{$this->slug}", 'preference'=>'now','_wpnonce'=>wp_create_nonce( "pi_save_review_preference_{$this->slug}" )), admin_url('admin-post.php')).'" target="_blank">'.__("Review Here").'</a></li>';
+        $notice .= '<li><a  class="pi-passive-btn pisol-review-btn" val="never" href="'.add_query_arg(array('action' => "pi_save_review_preference_{$this->slug}", 'preference'=>'never', '_wpnonce'=>wp_create_nonce( "pi_save_review_preference_{$this->slug}" )), admin_url('admin-post.php')).'">'.__("I would not").'</a></li>';	 
+        if($this->buy_url && $this->price){   
+            /* translators: Price */    
+            $notice .= '<li><a target="_blank" class="pi-buy-now-btn pisol-review-btn" val="never" href="'.esc_url($this->buy_url).'&utm_ref=review_reminder">'.sprintf(__("BUY PRO FOR %s"), $this->price).'</a></li>';	
+        }        
         $notice .= '</ul>';
         $notice .= '</div>';
         $notice .= '</div>';
         $notice .= '</div>';
         
-	    if(!$options && current_time('timestamp') >= strtotime($activation_time." +{$this->review_after} days")){
-	        echo $notice;
-	    } else if(is_array($options)) {
-	        if( array_key_exists('preference', $options) && array_key_exists('update_at', $options) && $options['preference'] =='later'){ 
+        if(!$options && current_time('timestamp') >= strtotime($activation_time." +{$this->review_after} days")){
+            echo wp_kses($notice, $this->allowed_tags);
+        } else if(is_array($options)) {
+            if( array_key_exists('preference', $options) && array_key_exists('update_at', $options) && $options['preference'] =='later'){ 
                 if($this->validateDate($options['update_at']) && current_time('timestamp') >= strtotime($options['update_at']." +{$this->review_after} days")){
-	                echo $notice;
+                    echo wp_kses($notice, $this->allowed_tags);
                 }
-	        }
-	    }
+            }
+        }
     }
 
     function savePreference(){
@@ -60,7 +178,7 @@ class pisol_http2_push_content_review{
             $preference = isset($_GET['preference']) ? $_GET['preference'] : 'later';
 
             if(!isset($_GET['_wpnonce']) || !wp_verify_nonce($nonce,"pi_save_review_preference_{$this->slug}")){
-                wp_die(__('Link has expired'), '', array('response' => 403));
+                wp_die(esc_html('Link has expired'), '', array('response' => 403));
             }
 
             $values['update_at'] = current_time('Y/m/d');
@@ -88,7 +206,7 @@ class pisol_http2_push_content_review{
         $get_install_date = get_option($this->activation_date);
         if(empty($get_install_date) || !$this->validateDate($get_install_date)){
             $now = current_time( "Y/m/d" );
-    	    add_option( $this->activation_date, $now );
+            add_option( $this->activation_date, $now );
             return $now;
         }
         return $get_install_date;

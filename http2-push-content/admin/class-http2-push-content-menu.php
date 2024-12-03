@@ -4,6 +4,7 @@ class Http2_Push_Content_Menu{
 
     public $plugin_name;
     public $menu;
+    public $version;
     
     function __construct($plugin_name , $version){
         $this->plugin_name = $plugin_name;

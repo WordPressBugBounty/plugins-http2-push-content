@@ -51,6 +51,10 @@ class Http2_Push_Content_Public {
 	public $css_async = array();
 
 	public $apply_obj; 
+
+	public $css_async_list;
+
+	public $js_async_list;
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -104,7 +108,7 @@ class Http2_Push_Content_Public {
 	function async_style($html, $handle, $href, $media){
 		$to_do = $this->check_async_style_list($href);
 		if($to_do[0]){
-			if($to_do[1] == 'remove'){
+			if($to_do[1] == 'remove' || $to_do[1] == 'remove-exclude'){
 				$final_html = "";
 			}else{
 				$final_html = '<link rel="preload" id="'.$handle.'" href="'.$href.'"  media="'.$media.'" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" />'.'<noscript>'.$html.'</noscript>';
@@ -120,11 +124,11 @@ class Http2_Push_Content_Public {
 		
 		if($to_do[0]){
 			
-			if($to_do[1] == 'remove'){
+			if($to_do[1] == 'remove' || $to_do[1] == 'remove-exclude'){
 				$final_html = "";
-			}elseif($to_do[1] == 'defer'){
+			}elseif($to_do[1] == 'defer' || $to_do[1] == 'defer-exclude'){
 				$final_html = '<script defer src="'.$src.'"></script>';
-			}elseif($to_do[1] == 'async'){
+			}elseif($to_do[1] == 'async' || $to_do[1] == 'async-exclude'){
 				$final_html = '<script async src="'.$src.'"></script>';
 			}
 
@@ -290,7 +294,7 @@ class Http2_Push_Content_Public {
 		if(is_array($resources)) {
 		foreach($resources as $link){
 			
-			if($this->apply_obj->check($link['apply_to'], $link)):
+			if($this->apply_obj->check($link['apply_to'], $link)){
 
 				if(isset($link) && $link != false):
 					if($link['to'] == 'preload' || $link['to'] == 'push-preload'){
@@ -300,9 +304,18 @@ class Http2_Push_Content_Public {
 					if($link['to'] == 'push' || $link['to'] == 'push-preload'){
 						$this->http2_link_to_header($link['url'], $link['as']);
 					}
+
+					if($link['to'] == 'preload-exclude' || $link['to'] == 'push-preload-exclude'){
+						$this->http2_resource_hints($link['url'], $link['as']);
+					}
+	
+					if($link['to'] == 'push-exclude' || $link['to'] == 'push-preload-exclude'){
+						$this->http2_link_to_header($link['url'], $link['as']);
+					}
+
 				endif;
 				
-			endif;
+			}
 		}
 		}
 	}

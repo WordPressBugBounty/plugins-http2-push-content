@@ -5,7 +5,7 @@ Tags: HTTP2, Async CSS, Defer CSS, Defer JS, Async JS, pagespeed, Optimize
 Requires at least: 4.0
 Tested up to: 6.7.0
 License: GPLv2 or later
-Stable tag: 1.10.17
+Stable tag: 1.10.19
 Requires PHP: 7.4
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,9 +14,13 @@ Push pre-load any resource, Async JavaScript, Defer Render Blocking CSS, with fi
 == Description ==
 
 * Push / Pre-load all **JS files** in site with one simple option
+
 * Push / Pre-load all the **CSS files** in your website
+
 * Push / Pre-load other resources throughout the site or based on the page types
+
 * Load CSS Asynchronous or Remove any CSS file throughout the site, or there is a conditional selector that you can apply
+
 * Async / Defer / Remove any JS file throughout the site or based on the WordPress page type
 
 * You can create mobile device specific rule to push, pre-load, remove, async js or css, this works based on the device user agent detection
@@ -29,7 +33,9 @@ Push pre-load any resource, Async JavaScript, Defer Render Blocking CSS, with fi
 
 * Remove CSS, JS specific to page or post by there ID
 
-* Organize rules in group foe easy management of the rules
+* Organize rules in group for easy management of the rules
+
+* Remove CSS, JS on all pages leaving only on the page you specified
 
 
 https://www.youtube.com/watch?v=GHGclxgbSqI
@@ -71,3 +77,6 @@ ues you can do that we have rule to apply rule every where excluding the page yo
 
 = Does it work with HTTP3 =
 Yes HTTP3 also support push and pre-load of resources
+
+= Remove CSS and JS from all the pages excluding one page =
+Yes you can do that by using the Exclude option and the page selection rule, so that way js or css will be removed from all the pages except the one you specified
