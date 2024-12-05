@@ -78,43 +78,10 @@ class Http2_Push_Content_General_Option{
         $general_list = get_option('http2_push_general_list',false);
        ?>
         <script type="text/javascript">
-        var general_push_list = <?php echo json_encode(($general_list == false) ? array(): array_values($general_list)); ?>;
+        var general_push_list = <?php echo count(($general_list == false) ? array(): array_values($general_list)); ?>;
         </script>
-        <script id="resource_tmpl" type="text/x-jsrender">
-        <div class="flex">
-        <input required type='text' class="form-control w-50 url" name="http2_push_general_list[{{: count}}][url]" value="{{: value.url}}" placeholder="Full url of resource">
-        <select required  class="form-control w-25" name="http2_push_general_list[{{: count}}][as]">
-                        <option disabled><?php _e('Select Resource Type', 'http2-push-content'); ?></option>
-                        <option value="script" {{if value.as == 'script'}}selected="selected"{{/if}}>script</option>
-                        <option value="style" {{if value.as == 'style'}}selected="selected"{{/if}}>style</option>
-                        <option value="audio" {{if value.as == 'audio'}}selected="selected"{{/if}}>audio</option>
-                        <option value="embed" {{if value.as == 'embed'}}selected="selected"{{/if}}>embed</option>
-                        <option value="fetch" {{if value.as == 'fetch'}}selected="selected"{{/if}}>fetch</option>
-                        <option value="font" {{if value.as == 'font'}}selected="selected"{{/if}}>font</option>
-                        <option value="image" {{if value.as == 'image'}}selected="selected"{{/if}}>image</option>
-                        <option value="object" {{if value.as == 'object'}}selected="selected"{{/if}}>object</option>
-                        <option value="video" {{if value.as == 'video'}}selected="selected"{{/if}}>video</option>
-        </select>
-        <select required class="form-control w-25" name="http2_push_general_list[{{: count}}][to]">
-                        <option disabled><?php _e('Select Push/Pull', 'http2-push-content'); ?></option>
-                        <option value="push-preload" {{if value.to == 'push-preload'}}selected="selected"{{/if}}>Push and Preload</option>
-                        <option value="push" {{if value.to == 'push'}}selected="selected"{{/if}}>Push</option>
-                        <option value="preload" {{if value.to == 'preload'}}selected="selected"{{/if}}>Preload</option>
-                        <option value="push-preload-exclude" {{if value.to == 'push-preload-exclude'}}selected="selected"{{/if}}>Push and Preload on all excluding</option>
-                        <option value="push-exclude" {{if value.to == 'push-exclude'}}selected="selected"{{/if}}>Push on all excluding</option>
-                        <option value="preload-exclude" {{if value.to == 'preload-exclude'}}selected="selected"{{/if}}>Preload on all excluding</option>
-        </select>
-        <select required class="general_push_list_rule form-control w-25"  name="http2_push_general_list[{{: count}}][apply_to]" data-count="{{: count}}" data-name="http2_push_general_list">
-            <?php 
-                $obj = new Http2_Push_Content_Apply_To(); 
-                $obj->apply_to_options();
-            ?>
-        </select>
-        {{if value.id != undefined && (value.apply_to == 'specific_pages' || value.apply_to == 'not_specific_pages' || value.apply_to == 'specific_posts' || value.apply_to == 'not_specific_posts') }}
-        <input class="pisol-ids form-control" type="text" name="http2_push_general_list[{{: count}}][id]" value="{{: value.id}}" id="http2_push_general_list_{{: count}}_id"  placeholder="e.g: 12, 22, 33">
-        {{/if}}
-        <a class="remove_resource_to_push" href="javascript:void(0);"><span class="dashicons dashicons-trash pi-icon"></span></a>
-        </div>
+        <script id="resource_tmpl" type="text/html">
+        <?php echo Http2_Push_Content_General_Option::templateRow(); ?>
         </script>
         <form method="post" action="options.php"  class="pisol-setting-form">
         <?php settings_fields( $this->setting_key ); ?>
@@ -126,7 +93,15 @@ class Http2_Push_Content_General_Option{
         <h2><?php echo __('Push or Preload or Do Both to any content: (put exact url of the resource from the page source)','http2-push-content'); ?><br><small>e.g: http://yoursite.com/wp-includes/js/jquery/jquery.js</small></h2>
         
         <div id="push-resource-list">
-
+        <?php
+        if($general_list){
+            $count = 0;
+            foreach($general_list as $key => $value){
+                self::templateRow($count, $value);
+                $count++;
+            }
+        }
+        ?>
         </div>
         <br>
         <a class="btn btn-info btn-sm" href="javascript:void(0);" id="add_resource_to_push"><span class="dashicons dashicons-plus-alt pi-icon"></span> Add Resource to push</a>
@@ -134,6 +109,64 @@ class Http2_Push_Content_General_Option{
         <input type="submit" class="mt-3 btn btn-primary btn-lg" value="Save Option" />
         </form>
        <?php
+    }
+
+    static function templateRow($count = '{{count}}', $value = array()){
+        $enabled = isset($value['enabled']) ? (!empty($value['enabled']) ? true : false) : true;
+        $checked = $enabled ? 'checked' : '';
+        $saved_as = isset($value['as']) ? $value['as'] : '';
+        $saved_to = isset($value['to']) ? $value['to'] : '';
+        $apply_to = isset($value['apply_to']) ? (is_array($value['apply_to']) ? $value['apply_to'] : [$value['apply_to']]) : [];
+        $conditions = ['specific_pages', 'not_specific_pages', 'specific_posts', 'not_specific_posts'];
+        $intercept = array_intersect($apply_to, $conditions);
+        if(count($intercept) > 0){
+            $show_id = true;
+        }else{
+            $show_id = false;
+        }
+        ?>
+            <div class="flex pisol-group">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input pi-enabled-checkbox" data-name="http2_push_general_list[<?php echo esc_attr($count); ?>][enabled]" id="pi_enabled_<?php echo esc_attr($count); ?>" <?php echo esc_attr($checked); ?>>
+                <input type="hidden" name="http2_push_general_list[<?php echo esc_attr($count); ?>][enabled]" value="<?php echo esc_attr($enabled ? 1 : 0); ?>">
+                <label class="custom-control-label" for="pi_enabled_<?php echo esc_attr($count); ?>"></label>
+            </div>
+            <input required type='text' class="form-control w-50 css_identifier" name="http2_push_general_list[<?php echo esc_attr($count); ?>][url]" value="<?php echo esc_attr($value['url'] ?? ''); ?>" placeholder="Full url of resource">
+            <select required  class="form-control w-25" name="http2_push_general_list[<?php echo esc_attr($count); ?>][as]">
+                        <option disabled selected value><?php _e('Select resource type', 'http2-push-content'); ?></option>
+                        <option value="script" <?php echo esc_attr($saved_as == 'script' ? 'selected' : ''); ?>>script</option>
+                        <option value="style" <?php echo esc_attr($saved_as == 'style' ? 'selected' : ''); ?>>style</option>
+                        <option value="audio" <?php echo esc_attr($saved_as == 'audio' ? 'selected' : ''); ?>>audio</option>
+                        <option value="embed" <?php echo esc_attr($saved_as == 'embed' ? 'selected' : ''); ?>>embed</option>
+                        <option value="fetch" <?php echo esc_attr($saved_as == 'fetch' ? 'selected' : ''); ?>>fetch</option>
+                        <option value="font" <?php echo esc_attr($saved_as == 'font' ? 'selected' : ''); ?>>font</option>
+                        <option value="image" <?php echo esc_attr($saved_as == 'image' ? 'selected' : ''); ?>>image</option>
+                        <option value="object" <?php echo esc_attr($saved_as == 'object' ? 'selected' : ''); ?>>object</option>
+                        <option value="video" <?php echo esc_attr($saved_as == 'video' ? 'selected' : ''); ?>>video</option>
+            </select>
+            <select required  class="form-control w-25" name="http2_push_general_list[<?php echo esc_attr($count); ?>][to]">
+                        <option disabled selected value><?php _e('Select Push/Pull', 'http2-push-content'); ?></option>
+                        <option value="push-preload" <?php echo esc_attr($saved_to == 'push-preload' ? 'selected' : ''); ?>>Push and Preload</option>
+                        <option value="push" <?php echo esc_attr($saved_to == 'push' ? 'selected' : ''); ?>>Push</option>
+                        <option value="preload" <?php echo esc_attr($saved_to == 'preload' ? 'selected' : ''); ?>>Preload</option>
+                        <option value="push-preload-exclude" <?php echo esc_attr($saved_to == 'push-preload-exclude' ? 'selected' : ''); ?>>Push and Preload on all excluding</option>
+                        <option value="push-exclude" <?php echo esc_attr($saved_to == 'push-exclude' ? 'selected' : ''); ?>>Push on all excluding</option>
+                        <option value="preload-exclude" <?php echo esc_attr($saved_to == 'preload-exclude' ? 'selected' : ''); ?>>Preload on all excluding</option>
+            </select>
+            <select required  class="general_async_css_list_rule form-control w-25 pages-to-apply" name="http2_push_general_list[<?php echo esc_attr($count); ?>][apply_to][]"  data-count="<?php echo esc_attr($count); ?>"  data-name="http2_push_general_list" multiple>
+                <?php 
+                    $obj = new Http2_Push_Content_Apply_To(); 
+                    $obj->apply_to_options_v2($apply_to);
+                ?>
+            </select>
+            <?php if(isset($value['id']) && $show_id){ ?>
+                <input class="pisol-ids form-control" type="text" name="http2_push_general_list[<?php echo esc_attr($count); ?>][id]" value="<?php echo esc_attr($value['id'] ?? ''); ?>" id="http2_push_general_list_<?php echo esc_attr($count); ?>_id"  placeholder="e.g: 12, 22, 33">
+            <?php }else{ ?>
+                <input class="pisol-ids form-control" type="text" name="http2_push_general_list[<?php echo esc_attr($count); ?>][id]" value="" id="http2_push_general_list_<?php echo esc_attr($count); ?>_id"  placeholder="e.g: 12, 22, 33" style="display:none;">
+            <?php } ?>  
+            <a class="remove_css_resource" href="javascript:void(0);"><span class="dashicons dashicons-trash pi-icon"></span></a>
+            </div>
+        <?php
     }
 }
 

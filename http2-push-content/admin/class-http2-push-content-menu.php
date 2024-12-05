@@ -29,8 +29,13 @@ class Http2_Push_Content_Menu{
     }
 
     public function bootstrap_style() {
+        wp_register_script( 'selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'selectWoo' );
+        wp_enqueue_style( 'select2', WC()->plugin_url() . '/assets/css/select2.css');
+        wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/http2-push-content-admin.js', array( 'jquery' ), $this->version, false );
 
 		wp_enqueue_style( $this->plugin_name."_bootstrap", plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), $this->version, 'all' );
+        wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/http2-push-content-admin.css', array(), $this->version, 'all' );
 
 	}
 

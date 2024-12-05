@@ -40,7 +40,7 @@ class Http2_Push_Content_Public {
 	 */
 	private $version;
 
-	public $push_list;
+	public $push_list = [];
 
 	public $push_general_list = false;
 
@@ -142,6 +142,12 @@ class Http2_Push_Content_Public {
 		$make_async = array(false, false);
 		if(is_array($this->js_async_list)):
 			foreach($this->js_async_list as $js){
+
+				$enabled = isset($js['enabled']) ? (!empty($js['enabled']) ? true : false) : true;
+				if(!$enabled){
+					continue;
+				}
+
 				if(isset($js['js']) && strpos($src, $js['js'])){
 					if($this->apply_obj->check($js['apply_to'], $js)):
 						$make_async = array(true, isset($js['to']) ? $js['to'] : 'async');
@@ -157,6 +163,12 @@ class Http2_Push_Content_Public {
 		$make_async = array(false, false);
 		if(is_array($this->css_async_list)):
 			foreach($this->css_async_list as $css){
+
+				$enabled = isset($css['enabled']) ? (!empty($css['enabled']) ? true : false) : true;
+				if(!$enabled){
+					continue;
+				}
+
 				if(isset($css['css']) && strpos($href, $css['css'])){
 					if($this->apply_obj->check($css['apply_to'], $css)):
 						$make_async = array(true, isset($css['to']) ? $css['to'] : 'async');
@@ -174,6 +186,11 @@ class Http2_Push_Content_Public {
 		$links = $this->push_general_list;
 		if(isset($links) && $links != false && is_array($links)):
 			foreach($links as $link){
+				$enabled = isset($link['enabled']) ? (!empty($link['enabled']) ? true : false) : true;
+				if(!$enabled){
+					continue;
+				}
+
 				$this->push_list[] = array(
 					'url'=>$link['url'],
 					'as'=> $link['as'],

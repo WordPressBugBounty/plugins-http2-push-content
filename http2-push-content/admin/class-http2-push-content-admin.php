@@ -82,7 +82,7 @@ class Http2_Push_Content_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/http2-push-content-admin.css', array(), $this->version, 'all' );
+		
 
 	}
 
@@ -105,9 +105,7 @@ class Http2_Push_Content_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/http2-push-content-admin.js', array( 'jquery',$this->plugin_name.'_tmpl' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name.'_tmpl', plugin_dir_url( __FILE__ ) . 'js/jsrender.min.js', array( 'jquery' ), $this->version, false );
-
+		
 	}
 
 }

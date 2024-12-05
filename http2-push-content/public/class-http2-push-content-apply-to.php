@@ -69,6 +69,37 @@ class Http2_Push_Content_Apply_To {
 		<?php
 	}
 
+	function apply_to_options_v2($selected = []){
+		?>
+			<option disabled value><?php _e('Where to do?', 'http2-push-content'); ?></option>
+			<option value="all"  <?php echo esc_attr(in_array('all', $selected) ? 'selected' : ''); ?>>All Pages</option>
+			<option value="mobile" <?php echo esc_attr(in_array('mobile', $selected) ? 'selected' : ''); ?>>Mobile or tablet Device</option>
+			<option value="not_mobile" <?php echo esc_attr(in_array('not_mobile', $selected) ? 'selected' : ''); ?>>Desktop</option>
+			<option value="front_page" <?php echo esc_attr(in_array('front_page', $selected) ? 'selected' : ''); ?>>On Front Page</option>
+			<option value="page" <?php echo esc_attr(in_array('page', $selected) ? 'selected' : ''); ?>>On Page</option> 
+			<option value="specific_pages" <?php echo esc_attr(in_array('specific_pages', $selected) ? 'selected' : ''); ?>>On Specific Pages (by page ID)</option> 
+			<option value="not_specific_pages" <?php echo esc_attr(in_array('not_specific_pages', $selected) ? 'selected' : ''); ?>>Not On Specific Pages (by page ID)</option> 
+			<option value="page_exclude_front_page" <?php echo esc_attr(in_array('page_exclude_front_page', $selected) ? 'selected' : ''); ?>>On Page exclude front page</option>                       
+			<option value="single" <?php echo esc_attr(in_array('single', $selected) ? 'selected' : ''); ?>>On Single Post</option>
+			<option value="specific_posts" <?php echo esc_attr(in_array('specific_posts', $selected) ? 'selected' : ''); ?>>On Specific Posts (by post ID)</option>  
+			<option value="not_specific_posts" <?php echo esc_attr(in_array('not_specific_posts', $selected) ? 'selected' : ''); ?>>Not On Specific posts (by page ID)</option>                        
+			<option value="home" <?php echo esc_attr(in_array('home', $selected) ? 'selected' : ''); ?>>On Blog Home</option>                        
+			<option value="category" <?php echo esc_attr(in_array('category', $selected) ? 'selected' : ''); ?>>On Category</option>                        
+			<option value="tag" <?php echo esc_attr(in_array('tag', $selected) ? 'selected' : ''); ?>>On Tag</option>                        
+			<option value="search" <?php echo esc_attr(in_array('search', $selected) ? 'selected' : ''); ?>>On Search Page</option>                        
+			<option value="rtl" <?php echo esc_attr(in_array('rtl', $selected) ? 'selected' : ''); ?>>On RTL Page</option>
+			
+			<option value="woocommerce_category" <?php echo esc_attr(in_array('woocommerce_category', $selected) ? 'selected' : ''); ?>>On WooCommerce category page</option>
+			<option value="woocommerce_shop" <?php echo esc_attr(in_array('woocommerce_shop', $selected) ? 'selected' : ''); ?>>On WooCommerce shop page</option>
+			<option value="woocommerce_single_product" <?php echo esc_attr(in_array('woocommerce_single_product', $selected) ? 'selected' : ''); ?>>On WooCommerce Single product page</option>
+
+			<option value="woocommerce_cart" <?php echo esc_attr(in_array('woocommerce_cart', $selected) ? 'selected' : ''); ?>>On WooCommerce cart page</option>
+			<option value="woocommerce_checkout" <?php echo esc_attr(in_array('woocommerce_checkout', $selected) ? 'selected' : ''); ?>>On WooCommerce checkout page</option>
+			
+			<option value="page_exclude_woo_cart_and_checkout" <?php echo esc_attr(in_array('page_exclude_woo_cart_and_checkout', $selected) ? 'selected' : ''); ?>>All Pages exclude WooCommerce Cart & Checkout Page</option>                     
+		<?php
+	}
+
 	function getArray($ids){
 		if(empty($ids)) return array();
 
@@ -84,16 +115,59 @@ class Http2_Push_Content_Apply_To {
 	 */
 	function check($apply_to, $rule = ""){
 		if(isset($apply_to)){
-			if(method_exists($this, 'is_'.$apply_to)){
-
-				if(is_array($rule) && isset($rule['to']) && in_array($rule['to'],['remove-exclude', 'async-exclude', 'defer-exclude','push-preload-exclude', 'push-exclude', 'preload-exclude'])){
-					return !$this->{'is_'.$apply_to}($rule);
+			if(is_array($apply_to)){
+				$result = [];
+				foreach($apply_to as $apply){
+					if($this->normalSingleCheck($apply, $rule)){
+						$result[] = true;
+					}else{
+						$result[] = false;
+					}
 				}
 
-				return $this->{'is_'.$apply_to}($rule);
+				if(is_array($rule) && isset($rule['to']) && in_array($rule['to'],['remove-exclude', 'async-exclude', 'defer-exclude','push-preload-exclude', 'push-exclude', 'preload-exclude'])){
+					if(in_array(true, $result)){
+						return false;
+					}else{
+						return true;
+					}
+				}
+
+				if(in_array(true, $result)){
+					return true;
+				}else{
+					return false;
+				}
+				
+				return false;
 			}else{
-				return true;
+				if($this->singleCheck($apply_to, $rule)){
+					return true;
+				}else{
+					return false;
+				}
 			}
+		}else{
+			return true;
+		}
+	}
+
+	function normalSingleCheck($apply_to, $rule = ""){
+		if(method_exists($this, 'is_'.$apply_to)){
+			return $this->{'is_'.$apply_to}($rule);
+		}else{
+			return true;
+		}
+	}
+
+	function singleCheck($apply_to, $rule = ""){
+		if(method_exists($this, 'is_'.$apply_to)){
+
+			if(is_array($rule) && isset($rule['to']) && in_array($rule['to'],['remove-exclude', 'async-exclude', 'defer-exclude','push-preload-exclude', 'push-exclude', 'preload-exclude'])){
+				return !$this->{'is_'.$apply_to}($rule);
+			}
+
+			return $this->{'is_'.$apply_to}($rule);
 		}else{
 			return true;
 		}

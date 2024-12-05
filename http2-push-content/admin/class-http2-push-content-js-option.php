@@ -92,32 +92,10 @@ class Http2_Push_Content_Js_Option{
         $this->createButton($general_list);
        ?>
         <script type="text/javascript">
-        var general_async_js_list = <?php echo json_encode(($general_list == false) ? array(): array_values($general_list)); ?>;
+        var general_async_js_list = <?php echo count(($general_list == false) ? array(): array_values($general_list)); ?>;
         </script>
-        <script id="async_js_list_tmpl" type="text/x-jsrender">
-        <div class="flex pisol-group pisol-group-{{if value.group_slug }}{{: value.group_slug}}{{/if}}{{if !value.group_slug }}all{{/if}}">
-        <input required type='text' class="form-control w-50 css_identifier" name="http2_async_js_list[{{: count}}][js]" value="{{: value.js}}" placeholder="JS Identifier E.g: twentytwenty/jquery.js">
-        <select required  class="form-control w-25" name="http2_async_js_list[{{: count}}][to]">
-                        <option disabled><?php _e('Select', 'http2-push-content'); ?></option>
-                        <option value="async" {{if value.to == 'async'}}selected="selected"{{/if}}>Asynchronous</option>
-                        <option value="defer" {{if value.to == 'defer'}}selected="selected"{{/if}}>Differed</option>
-                        <option value="remove" {{if value.to == 'remove'}}selected="selected"{{/if}}>Remove</option>
-                        <option value="async-exclude" {{if value.to == 'async-exclude'}}selected="selected"{{/if}}>Asynchronous on all excluding</option>
-                        <option value="defer-exclude" {{if value.to == 'defer-exclude'}}selected="selected"{{/if}}>Differed on all excluding</option>
-                        <option value="remove-exclude" {{if value.to == 'remove-exclude'}}selected="selected"{{/if}}>Remove on all excluding</option>
-        </select>
-        <select required  class="general_async_js_list_rule form-control w-25" name="http2_async_js_list[{{: count}}][apply_to]"  data-count="{{: count}}"  data-name="http2_async_js_list">
-            <?php 
-                $obj = new Http2_Push_Content_Apply_To(); 
-                $obj->apply_to_options();
-            ?>
-        </select>
-        {{if value.id != undefined && (value.apply_to == 'specific_pages' || value.apply_to == 'not_specific_pages' || value.apply_to == 'specific_posts' || value.apply_to == 'not_specific_posts') }}
-        <input class="pisol-ids form-control" type="text" name="http2_async_js_list[{{: count}}][id]" value="{{: value.id}}" id="http2_async_js_list_{{: count}}_id"  placeholder="e.g: 12, 22, 33">
-        {{/if}}
-        <input type='text' class="form-control w-25 css_identifier" name="http2_async_js_list[{{: count}}][group]" value="{{: value.group}}" placeholder="Group name" title="this helps you to group similar rule to gather so you can manage them properly, So if you are removing some content from home page you can name this as group Home, if you are removing some thing from all the pages then you can name it as All">
-        <a class="remove_js_resource" href="javascript:void(0);"><span class="dashicons dashicons-trash pi-icon"></span></a>
-        </div>
+        <script id="async_js_list_tmpl" type="text/html">
+        <?php echo Http2_Push_Content_Js_Option::templateRow(); ?>
         </script>
         <form method="post" action="options.php"  class="pisol-setting-form">
         <?php settings_fields( $this->setting_key ); ?>
@@ -130,7 +108,15 @@ class Http2_Push_Content_Js_Option{
         </div>
         <h2><?php echo __('Asynchronous or Defer or Remove JS file','http2-push-content'); ?></h2>
         <div id="js-resource-list">
-
+        <?php
+        if($general_list){
+            $count = 0;
+            foreach($general_list as $key => $value){
+                self::templateRow($count, $value);
+                $count++;
+            }
+        }
+        ?>
         </div>
         <br>
         <a class="btn btn-info btn-sm" href="javascript:void(0);" id="add_js"><span class="dashicons dashicons-plus-alt pi-icon"></span> Add JS</a>
@@ -161,6 +147,45 @@ class Http2_Push_Content_Js_Option{
             <?php
         }
         echo '</div>';
+    }
+
+    static function templateRow($count = '{{count}}', $value = array()){
+        $enabled = isset($value['enabled']) ? (!empty($value['enabled']) ? true : false) : true;
+        $checked = $enabled ? 'checked' : '';
+        $saved_to = isset($value['to']) ? $value['to'] : '';
+        $apply_to = isset($value['apply_to']) ? (is_array($value['apply_to']) ? $value['apply_to'] : [$value['apply_to']]) : [];
+        ?>
+            <div class="flex pisol-group pisol-group-<?php echo esc_attr(isset($value['group_slug']) ? $value['group_slug'] : 'all'); ?>">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input pi-enabled-checkbox" data-name="http2_async_js_list[<?php echo esc_attr($count); ?>][enabled]" id="pi_enabled_<?php echo esc_attr($count); ?>" <?php echo esc_attr($checked); ?>>
+                <input type="hidden" name="http2_async_js_list[<?php echo esc_attr($count); ?>][enabled]" value="<?php echo esc_attr($enabled ? 1 : 0); ?>">
+                <label class="custom-control-label" for="pi_enabled_<?php echo esc_attr($count); ?>"></label>
+            </div>
+            <input required type='text' class="form-control w-50 css_identifier" name="http2_async_js_list[<?php echo esc_attr($count); ?>][js]" value="<?php echo esc_attr($value['js'] ?? ''); ?>" placeholder="JS Identifier E.g: twentytwenty/jquery.js">
+            <select required  class="form-control w-25" name="http2_async_js_list[<?php echo esc_attr($count); ?>][to]">
+                            <option disabled selected value=""><?php _e('What to do with this JS?', 'http2-push-content'); ?></option>
+                            <option value="async" <?php echo esc_attr($saved_to == 'async' ? 'selected' : ''); ?>>Asynchronous</option>
+                            <option value="defer" <?php echo esc_attr($saved_to == 'defer' ? 'selected' : ''); ?>>Differed</option>
+                            <option value="remove" <?php echo esc_attr($saved_to == 'remove' ? 'selected' : ''); ?>>Remove</option>
+                            <option value="async-exclude" <?php echo esc_attr($saved_to == 'async-exclude' ? 'selected' : ''); ?>>Asynchronous on all excluding</option>
+                            <option value="defer-exclude" <?php echo esc_attr($saved_to == 'defer-exclude' ? 'selected' : ''); ?>>Differed on all excluding</option>
+                            <option value="remove-exclude" <?php echo esc_attr($saved_to == 'remove-exclude' ? 'selected' : ''); ?>>Remove on all excluding</option>
+            </select>
+            <select required  class="general_async_js_list_rule form-control w-25 pages-to-apply" name="http2_async_js_list[<?php echo esc_attr($count); ?>][apply_to][]"  data-count="<?php echo esc_attr($count); ?>"  data-name="http2_async_js_list" multiple>
+                <?php 
+                    $obj = new Http2_Push_Content_Apply_To(); 
+                    $obj->apply_to_options_v2($apply_to);
+                ?>
+            </select>
+            <?php if(isset($value['id']) && ($value['apply_to'] == 'specific_pages' || $value['apply_to'] == 'not_specific_pages' || $value['apply_to'] == 'specific_posts' || $value['apply_to'] == 'not_specific_posts')){ ?>
+                <input class="pisol-ids form-control" type="text" name="http2_async_js_list[<?php echo esc_attr($count); ?>][id]" value="<?php echo esc_attr($value['id'] ?? ''); ?>" id="http2_async_js_list_<?php echo esc_attr($count); ?>_id"  placeholder="e.g: 12, 22, 33">
+            <?php }else{ ?>
+                <input class="pisol-ids form-control" type="text" name="http2_async_js_list[<?php echo esc_attr($count); ?>][id]" value="" id="http2_async_js_list_<?php echo esc_attr($count); ?>_id"  placeholder="e.g: 12, 22, 33" style="display:none;">
+            <?php } ?>  
+            <input type='text' class="form-control w-25 css_identifier" name="http2_async_js_list[<?php echo esc_attr($count); ?>][group]" value="<?php echo esc_attr($value['group'] ?? ''); ?>" placeholder="Group name" title="this helps you to group similar rule to gather so you can manage them properly, So if you are removing some content from home page you can name this as group Home, if you are removing some thing from all the pages then you can name it as All">
+            <a class="remove_js_resource" href="javascript:void(0);"><span class="dashicons dashicons-trash pi-icon"></span></a>
+            </div>
+        <?php
     }
 }
 

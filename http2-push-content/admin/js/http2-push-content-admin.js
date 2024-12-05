@@ -30,169 +30,89 @@
    */
 
   jQuery(document).ready(function ($) {
-    /*
-    if (typeof general_push_list != "undefined") {
-      var count =
-        general_push_list.length == 0 ? 0 : general_push_list.length + 1;
+    
 
-      jQuery("#push-resource-list").append(
-        jQuery("#resource_tmpl").render(
-          general_push_list.map(function(val, index) {
-            return { count: index, url: val.url, as: val.as, to: val.to };
-          })
-        )
-      );
-    }
-    */
-
-    /*
-    $("#add_resource_to_push").click(function() {
-      var data = {
-        count: count,
-        url: "",
-        as: "",
-        to: ""
-      };
-      var template = $.templates("#resource_tmpl");
-      var htmlOutput = template.render(data);
-      $("#push-resource-list").append(htmlOutput);
-      count++;
-    });
-    */
-    /*
-    $(document).on("click", ".remove_resource_to_push", function() {
-      var selected = $(this).parent();
-      selected.remove();
-      count--;
-    });
-    */
-    /**
-     * New impementation as fnction
-     * stored_value_array: the value given by php array
-     * list_container: where all list element will be added
-     * tmpl: resource template id
-     * add_btn: id of the button that will add the row
-     * default_data: default object that will be used to add row
-     * remove_row: class of element that will remove row
-     */
-
-    function pi_new_field(
-      stored_value_array,
-      list_container,
-      tmpl,
-      add_btn,
-      default_data,
-      remove_row
-    ) {
-      this.stored_value_array = stored_value_array;
-      this.list_container = list_container;
-      this.tmpl = tmpl;
+    function row_manager_js(saved_count, container, template, add_btn, remove_row, rule_element) {
+      this.count = saved_count;
+      this.container = container;
+      this.template = template;
       this.add_btn = add_btn;
-      this.default_data = default_data;
       this.remove_row = remove_row;
-      /**
-       * populating based on stored value
-       */
-      if (typeof window[this.stored_value_array] != "undefined") {
-        this.count =
-          window[this.stored_value_array].length == 0
-            ? 0
-            : window[this.stored_value_array].length;
-
-        jQuery("#" + this.list_container).append(
-          jQuery("#" + this.tmpl).render(
-            window[this.stored_value_array].map(function (val, index) {
-              console.log({ count: index, value: val });
-              return { count: index, value: val };
-            })
-          )
-        );
+      this.rule_element = rule_element;
+      this.init = function(){
+        this.addRowEvent();
+        this.removeRowEvent();
+        this.rule_change();
       }
 
-      $(document).on('change', "." + this.stored_value_array + '_rule', function () {
-        var value = $(this).val();
-        var count = $(this).data('count');
-        var name = $(this).data('name');
-        $('#' + name + '_' + count + '_id').remove();
-        if (value == 'specific_pages' || value == 'not_specific_pages' || value == 'specific_posts' || value == 'not_specific_posts') {
-          $(this).after('<input class="pisol-ids form-control" type="text" name="' + name + '[' + count + '][id]" id="' + name + '_' + count + '_id" placeholder="e.g: 12, 22, 33">');
-        } else {
-          $('#' + name + '_' + count + '_id').remove();
-        }
-      });
+      this.addRowEvent = function(){
+        var parent = this;
+        jQuery(document).on('click', parent.add_btn, function(){
+          var template = jQuery(parent.template).html();
+          //remove {{count}} from the template
+          template = template.replace(/{{count}}/g, parent.count);
+          jQuery(parent.container).append(template);
+          parent.count++;
 
-      /**
-       * Adding
-       */
-      $("#" + this.add_btn).click(() => {
-        var data = {
-          count: this.count,
-          value: this.default_data
-        };
-        var template = $.templates("#" + this.tmpl);
-        var htmlOutput = template.render(data);
-        $("#" + this.list_container).append(htmlOutput);
-        this.count++;
-      });
+          if (jQuery.fn && typeof jQuery.fn.selectWoo === "function") {
+            jQuery(".pages-to-apply").selectWoo({
+              placeholder: "Where to do?"
+            });
+          }
 
-      /**
-       * Removing
-       */
-      $(document).on("click", "." + this.remove_row, e => {
-        var selected = $(e.currentTarget).parent();
-        selected.remove();
-        /*this.count--;*/
-      });
+        });
+      }
+
+      this.removeRowEvent = function(){
+        var parent = this;
+        $(document).on("click", parent.remove_row , e => {
+          var selected = $(e.currentTarget).parent();
+          selected.remove();
+          /*this.count--;*/
+        });
+      }
+
+      this.rule_change = function(){
+        var parent = this;
+        $(document).on('change', parent.rule_element, function () {
+          var value = $(this).val();
+          console.log(value);
+          var count = $(this).data('count');
+          var name = $(this).data('name');
+          var conditions = ['specific_pages', 'not_specific_pages', 'specific_posts', 'not_specific_posts'];
+          var $target = $('#' + name + '_' + count + '_id');
+          
+          $target.hide();
+
+          if (Array.isArray(value)) {
+              // If multi-select, check if any condition matches
+              if (value.some(function (v) { return conditions.includes(v); })) {
+                  $target.show();
+              }
+          } else {
+              // If single value, check directly
+              if (conditions.includes(value)) {
+                  $target.show();
+              }
+          }
+
+        });
+      }
     }
 
-    /**
-     * general push list resources
-     */
-    new pi_new_field(
-      "general_push_list",
-      "push-resource-list",
-      "resource_tmpl",
-      "add_resource_to_push",
-      {
-        url: "",
-        as: "",
-        to: "",
-        apply_to: "all"
-      },
-      "remove_resource_to_push"
-    );
+    var saved_count_js = typeof general_async_js_list !== 'undefined' ? general_async_js_list : 0;
+    var row_manager_js_obj = new row_manager_js(saved_count_js, "#js-resource-list", '#async_js_list_tmpl', '#add_js', '.remove_js_resource', ".general_async_js_list_rule");
+    row_manager_js_obj.init();
 
-    /**
-     * CSS async list
-     */
-    new pi_new_field(
-      "general_async_css_list",
-      "css-resource-list",
-      "async_css_list_tmpl",
-      "add_css",
-      {
-        css: "",
-        to: "",
-        apply_to: "all"
-      },
-      "remove_css_resource"
-    );
+    var saved_count_css = typeof general_async_css_list !== 'undefined' ? general_async_css_list : 0;
+    var row_manager_css_obj = new row_manager_js(saved_count_css, "#css-resource-list", '#async_css_list_tmpl', '#add_css', '.remove_css_resource', ".general_async_css_list_rule");
+    row_manager_css_obj.init();
 
-    /**
-     * JSS async list
-     */
-    new pi_new_field(
-      "general_async_js_list",
-      "js-resource-list",
-      "async_js_list_tmpl",
-      "add_js",
-      {
-        js: "",
-        to: "",
-        apply_to: "all"
-      },
-      "remove_js_resource"
-    );
+    var saved_count_general = typeof general_push_list !== 'undefined' ? general_push_list : 0;
+    var row_manager_general_obj = new row_manager_js(saved_count_general, "#push-resource-list", '#resource_tmpl', '#add_resource_to_push', '.remove_resource_to_push', ".general_push_list_rule");
+    row_manager_general_obj.init();
+
+
 
     jQuery(document).on('click', '.pisol-filter-group', function () {
 
@@ -209,6 +129,22 @@
           jQuery('.pisol-group-' + group).fadeIn();
       }
     });
+
+    if (jQuery.fn && typeof jQuery.fn.selectWoo === "function") {
+      jQuery(".pages-to-apply").selectWoo({
+        placeholder: "Where to do?"
+      });
+    }
+
+    jQuery(document).on('change', '.pi-enabled-checkbox', function () {
+      var target = jQuery(this).data('name');
+      if(jQuery(this).is(':checked')){
+        jQuery('input[name="'+target+'"]').val('1');
+      }else{
+        jQuery('input[name="'+target+'"]').val('0');
+      }
+    });
+    
 
   });
 })(jQuery);
