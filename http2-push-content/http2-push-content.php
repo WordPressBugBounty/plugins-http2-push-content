@@ -9,13 +9,13 @@
  * that starts the plugin.
  *
  * @link              piwebsolution.com
- * @since             1.10.20
+ * @since             1.10.21
  * @package           Http2_Push_Content
  *
  * @wordpress-plugin
  * Plugin Name:       HTTP2 push content
  * Description:       Push all CSS and JS file through http2 server, plugin add extra files that you want to push like images font files and other
- * Version:           1.10.20
+ * Version:           1.10.21
  * Author:            Pi websolution
  * Author URI:        piwebsolution.com
  * License:           GPL-2.0+
@@ -53,7 +53,7 @@ if(is_plugin_active( 'http2-push-content-pro/http2-push-content.php')){
  * Rename this for your plugin and update it as you release new versions.
  */
 
-define( 'HTTP2_PUSH_CONTENT', '1.10.20' );
+define( 'HTTP2_PUSH_CONTENT', '1.10.21' );
 
 define('HTTP2_PUSH_CONTENT_PRICE', '$11');
 define('HTTP2_PUSH_CONTENT_BUY_URL', 'https://www.piwebsolution.com/cart/?add-to-cart=694&variation_id=1682');

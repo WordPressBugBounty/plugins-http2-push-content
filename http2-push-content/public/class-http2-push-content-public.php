@@ -85,7 +85,7 @@ class Http2_Push_Content_Public {
 
 			
 			
-			add_action( 'wp_head', array($this,'http2_resource_in_document'), 99, 1);
+			add_action( 'wp_head', array($this,'http2_resource_in_document'), 1, 1);
 			
 			if($this->push_all_script != false):
 				add_filter('script_loader_src', array($this,'http2_link_script_to_header'), 99, 1);
