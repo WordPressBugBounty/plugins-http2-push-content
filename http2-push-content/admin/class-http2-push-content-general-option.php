@@ -28,12 +28,8 @@ class Http2_Push_Content_General_Option{
         $this->tab = sanitize_text_field(filter_input( INPUT_GET, 'tab'));
         $this->active_tab = $this->tab != "" ? $this->tab : 'default';
 
-        $this->settings = array(
-                array('field'=>'http2_push_general_list'),
-                array('field'=>'push_all_style', 'label'=>__('Push/Preload all style','http2-push-content'),'type'=>'select', 'value'=>array(false =>__('Do Nothing','http2-push-content'), 'push'=>__('Push','http2-push-content'), 'preload'=>__('Preload','http2-push-content'), 'push-preload'=>__('Push Preload','http2-push-content')), 'default'=>'push-preload', 'desc'=>__('This push and preload all the style sheet added using enque method','http2-push-content')),
-                array('field'=>'push_all_script', 'label'=>__('Push/Preload all script','http2-push-content'),'type'=>'select', 'value'=>array(false =>__('Do Nothing','http2-push-content'),'push'=>__('Push','http2-push-content'), 'preload'=>__('Preload','http2-push-content'), 'push-preload'=>__('Push Preload','http2-push-content')), 'default'=>'push-preload', 'desc'=>__('This push and preload all the script added using enqueue method','http2-push-content')),
-            );
         
+        add_action('init', [$this, 'init']);
 
         if($this->this_tab == $this->active_tab){
             add_action($this->plugin_name.'_tab_content', array($this,'tab_content'));
@@ -43,6 +39,15 @@ class Http2_Push_Content_General_Option{
 
         add_filter('pre_update_option_http2_push_general_list',array($this, 'remove_blank_values'));
         
+        
+    }
+
+    function init(){
+        $this->settings = array(
+            array('field'=>'http2_push_general_list'),
+            array('field'=>'push_all_style', 'label'=>__('Push/Preload all style','http2-push-content'),'type'=>'select', 'value'=>array(false =>__('Do Nothing','http2-push-content'), 'push'=>__('Push','http2-push-content'), 'preload'=>__('Preload','http2-push-content'), 'push-preload'=>__('Push Preload','http2-push-content')), 'default'=>'push-preload', 'desc'=>__('This push and preload all the style sheet added using enque method','http2-push-content')),
+            array('field'=>'push_all_script', 'label'=>__('Push/Preload all script','http2-push-content'),'type'=>'select', 'value'=>array(false =>__('Do Nothing','http2-push-content'),'push'=>__('Push','http2-push-content'), 'preload'=>__('Preload','http2-push-content'), 'push-preload'=>__('Push Preload','http2-push-content')), 'default'=>'push-preload', 'desc'=>__('This push and preload all the script added using enqueue method','http2-push-content')),
+        );
         $this->register_settings();
     }
 
