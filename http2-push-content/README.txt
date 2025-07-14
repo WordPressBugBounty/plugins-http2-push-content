@@ -1,15 +1,15 @@
-=== HTTP/2 Push, Async JavaScript, Defer Render Blocking CSS, HTTP2 server push, HTTP3 push ===
+=== Page Speed Optimizer: HTTP/2 Push, Async JavaScript, and Defer CSS ===
 Contributors: rajeshsingh520
 Donate link: piwebsolution.com
 Tags: HTTP2, Async CSS, Defer CSS, Defer JS, Async JS, pagespeed, Optimize
 Requires at least: 4.0
 Tested up to: 6.8
 License: GPLv2 or later
-Stable tag: 1.10.31
+Stable tag: 1.10.32
 Requires PHP: 7.4
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Push pre-load any resource, Async JavaScript, Defer Render Blocking CSS, with fine rule set to control js and css on different page types, HTTP2 Server push
+HTTP2 Server push, Async JavaScript, Defer Render Blocking CSS, with fine rule set to control js and css on different page types, 
 
 == Description ==
 
