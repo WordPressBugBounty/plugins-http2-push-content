@@ -154,6 +154,13 @@ class Http2_Push_Content_Js_Option{
         $checked = $enabled ? 'checked' : '';
         $saved_to = isset($value['to']) ? $value['to'] : '';
         $apply_to = isset($value['apply_to']) ? (is_array($value['apply_to']) ? $value['apply_to'] : [$value['apply_to']]) : [];
+        $conditions = ['specific_pages', 'not_specific_pages', 'specific_posts', 'not_specific_posts'];
+        $intercept = array_intersect($apply_to, $conditions);
+        if(count($intercept) > 0){
+            $show_id = true;
+        }else{
+            $show_id = false;
+        }
         ?>
             <div class="flex pisol-group pisol-group-<?php echo esc_attr(isset($value['group_slug']) ? $value['group_slug'] : 'all'); ?>">
             <div class="custom-control custom-switch">
@@ -177,7 +184,7 @@ class Http2_Push_Content_Js_Option{
                     $obj->apply_to_options_v2($apply_to);
                 ?>
             </select>
-            <?php if(isset($value['id']) && ($value['apply_to'] == 'specific_pages' || $value['apply_to'] == 'not_specific_pages' || $value['apply_to'] == 'specific_posts' || $value['apply_to'] == 'not_specific_posts')){ ?>
+            <?php if(isset($value['id']) && $show_id){ ?>
                 <input class="pisol-ids form-control" type="text" name="http2_async_js_list[<?php echo esc_attr($count); ?>][id]" value="<?php echo esc_attr($value['id'] ?? ''); ?>" id="http2_async_js_list_<?php echo esc_attr($count); ?>_id"  placeholder="e.g: 12, 22, 33">
             <?php }else{ ?>
                 <input class="pisol-ids form-control" type="text" name="http2_async_js_list[<?php echo esc_attr($count); ?>][id]" value="" id="http2_async_js_list_<?php echo esc_attr($count); ?>_id"  placeholder="e.g: 12, 22, 33" style="display:none;">

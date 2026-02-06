@@ -3,9 +3,9 @@ Contributors: rajeshsingh520
 Donate link: piwebsolution.com
 Tags: HTTP2, Async CSS, Defer CSS, Defer JS, Async JS, pagespeed, Optimize
 Requires at least: 4.0
-Tested up to: 6.8
+Tested up to: 6.9
 License: GPLv2 or later
-Stable tag: 1.10.37
+Stable tag: 1.10.41
 Requires PHP: 7.4
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,23 +29,23 @@ HTTP2 Server push, Async JavaScript, Defer Render Blocking CSS, with fine rule s
 
 * Conditionally remove JS and CSS from various WooCommerce pages like checkout page, cart page, product page, product category page
 
-* You can push pre-load resource specific on some pages by there ID
+* You can push pre-load resource specific on some pages by their ID
 
-* Remove CSS, JS specific to page or post by there ID
+* Remove CSS, JS specific to page or post by their ID
 
 * Organize rules in group for easy management of the rules
 
 * Remove CSS, JS on all pages leaving only on the page you specified
 
-* optimize woocommerce speed
+* optimize WooCommerce speed
 
-* optimize wordpress website speed
+* optimize WordPress website speed
 
 
 https://www.youtube.com/watch?v=GHGclxgbSqI
 
 <blockquote>
-Mobile and Desktop detection works based on the wp_is_mobile() function of the WordPress that detect device based on the user agent date send in the request
+Mobile and Desktop detection works based on the wp_is_mobile() function of the WordPress that detect device based on the user agent data send in the request
 </blockquote>
 
 Apart from this it also offer ability to remove Css and JS file from specific pages based in the selected page tag conditions 
@@ -74,10 +74,10 @@ yes there is rules to control resources based on WooCommerce page types like pro
 you can do that there is that allows you to specify the Page id for which you want to push the resource
 
 = I want to remove some JS and CSS specific on some page =
-yes there is rule using that you can remove it for specific page by specifying there page id, e.g: 1,4,66 will select the page with id 1 ,4, and 66
+Yes there is rule using that you can remove it for specific page by specifying the page id, e.g: 1,4,66 will select the page with id 1 ,4, and 66
 
 = I want to remove it for whole site excluding certain pages =
-ues you can do that we have rule to apply rule every where excluding the page you specified by id
+Yes you can do that we have rule to apply rule everywhere excluding the page you specified by id
 
 = Does it work with HTTP3 =
 Yes HTTP3 also support push and pre-load of resources
@@ -86,6 +86,9 @@ Yes HTTP3 also support push and pre-load of resources
 Yes you can do that by using the Exclude option and the page selection rule, so that way js or css will be removed from all the pages except the one you specified
 
 == Changelog ==
+
+= 1.10.40 =
+* Fix: Fixed the issue exact page id field not showing after saving the rule
 
 = 1.10.31 =
 * Fix: Fixed the issue with the select2 not loading properly when WooCommerce is not installed
