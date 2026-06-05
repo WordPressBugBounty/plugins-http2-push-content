@@ -3,9 +3,9 @@ Contributors: rajeshsingh520
 Donate link: piwebsolution.com
 Tags: HTTP2, Async CSS, Defer CSS, Defer JS, Async JS, pagespeed, Optimize
 Requires at least: 4.0
-Tested up to: 6.9
+Tested up to: 7.0
 License: GPLv2 or later
-Stable tag: 1.10.46
+Stable tag: 1.10.47
 Requires PHP: 7.4
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ Yes HTTP3 also support push and pre-load of resources
 Yes you can do that by using the Exclude option and the page selection rule, so that way js or css will be removed from all the pages except the one you specified
 
 == Changelog ==
+
+= 1.10.47 =
+* Tested for WP 7.0
 
 = 1.10.40 =
 * Fix: Fixed the issue exact page id field not showing after saving the rule
