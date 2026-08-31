@@ -139,7 +139,6 @@ class Http2_Push_Content {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-http2-push-content-style-option.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-http2-push-content-js-option.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/pisol.class.form.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/pisol.class.promotion.php';
 
 		
 		$this->loader = new Http2_Push_Content_Loader();

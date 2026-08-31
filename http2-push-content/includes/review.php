@@ -23,7 +23,7 @@ class pisol_http2_push_content_review{
         $this->activation_date = "pi_review_activation_date_{$this->slug}";
         $this->saved_value = "pi_review_saved_value_{$this->slug}";
         $this->review_url = "https://wordpress.org/support/plugin/{$this->slug}/reviews/?rate=5#new-post";
-        $this->review_after = 6;
+        $this->review_after = 14;
         $this->buy_url = $buy_url;
         $this->price = $price;
 
@@ -126,14 +126,17 @@ class pisol_http2_push_content_review{
         
         .pi-active-btn {
             background-color: #00adb5;
+            color:#ffffff !important;
         }
         
         .pi-passive-btn {
             background-color: #ccc;
+            color:#ffffff !important;
         }
 
         .pi-buy-now-btn {
             background-color: #ee6443;
+            color:#ffffff !important;
         }
 
         .pi-flex{
